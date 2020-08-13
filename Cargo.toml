@@ -1,8 +1,16 @@
 [package]
 name = "rle-bitset"
 version = "0.1.0"
+description = "A no-std, no-alloc trait for querying and manipulating bits in a `[usize]` and iterating their run lengths."
+keywords = ["bits", "bitset", "run-length"]
+categories = ["algorithms", "data-structures", "no-std"]
+homepage = "https://github.com/irrustible/rle-bitset"
+repository = "https://github.com/irrustible/rle-bitset"
+documentation = "https://docs.rs/rle-bitset"
+license = "MPL-2.0"
 authors = ["James Laver <james.laver@gmail.com>"]
 edition = "2018"
+readme = "README.md"
 
 [dependencies]
 primitive_traits = "0.1"
