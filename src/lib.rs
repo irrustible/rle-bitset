@@ -1,15 +1,23 @@
 //! A no-std, no-alloc trait for querying and manipulating bits in a
 //! [`[usize]`] and iterating their run lengths.
-// #![no_std]
+#![no_std]
 use core::cmp::min;
 use core::ops::{Bound::*, Range, RangeBounds};
 use primitive_traits::Integer;
 
 pub const WORD_WIDTH: usize = <usize as Integer>::WIDTH;
 
+/// A single inhabitancy type marking that we were out of range.
 #[derive(Debug, Eq, PartialEq)]
 pub struct OutOfRange();
 
+/// Returns the number of usizes needed to capture the given number of bits.
+pub fn words_needed(vals: usize) -> usize {
+    (vals / WORD_WIDTH) + min(0, vals % WORD_WIDTH)
+}
+
+/// A trait that allows reading, setting and iterating bits by their
+/// run lengths.
 pub trait RLEBits {
     /// Gets the bit at the provided index, if it is within range.
     fn get_bit(&self, bit: usize) -> Result<bool, OutOfRange>;
@@ -56,7 +64,7 @@ pub struct RL {
 }
 
 impl RL {
-    /// Creates a new [`RL`].
+    /// Creates a new [`$crate::RL`].
     pub fn new(value: bool, start: usize, end: usize) -> RL {
         RL { value, run: start..end }
     }
@@ -66,12 +74,14 @@ impl RL {
 #[derive(Debug)]
 pub struct RLE<'a> {
     storage: &'a [usize],
-    pub range: Range<usize>,
+    range: Range<usize>,
     last: Option<RL>,
 }
 
 impl<'a> RLE<'a> {
 
+    /// Creates a new [`$crate::RLE`] iterating over the provided slice's bits
+    /// in the given range.
     pub fn new<R: RangeBounds<usize>>(storage: &'a [usize], range: R) -> Result<RLE<'a>, OutOfRange> {
         let size = storage.len() * WORD_WIDTH;
         let s = match range.start_bound() {
